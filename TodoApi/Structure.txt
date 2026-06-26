@@ -1,0 +1,13 @@
+TodoApi/
+  Program.cs            DI wiring, middleware order, Swagger
+  appsettings.json      ConnectionStrings:Default = Data Source=app.db
+  Data/AppDbContext.cs  DbSets, relationships, seed
+  Domain/Entities/      TodoList, TodoItem, Tag, TodoItemTag, enums (Priority, TodoStatus)
+  Dtos/                 request + response records per controller
+  Repositories/         I*Repository + impl (TodoList, TodoItem, Tag)
+  Providers/            I*Provider + impl (TodoList, TodoItem, Tag)
+  Controllers/          TodoListsController, TodoItemsController, TagsController
+  Common/               ProviderResult<T>/OperationStatus, typed exceptions
+  Middleware/ (optional) RequestResponseLogging, ExceptionHandling
+  Filters/    (optional) RequestTimingActionFilter, ValidateModelActionFilter
+  TodoApi.http          executable endpoint tests
