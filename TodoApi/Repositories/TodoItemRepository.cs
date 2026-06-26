@@ -15,8 +15,10 @@ public class TodoItemRepository : ITodoItemRepository
     public Task<TodoItem?> GetByIdAsync(int id)
         => _context.TodoItems.FirstOrDefaultAsync(l => l.Id == id);
     
-    public async Task<TodoItem?> GetByListIdAsync(int id)
-        => await _context.TodoItems.FirstOrDefaultAsync(i => i.TodoListId == id);
+    public async Task<List<TodoItem>> GetByListIdAsync(int id)
+        => await _context.TodoItems
+            .Where(x => x.TodoListId == id)
+            .ToListAsync();
     
     public async Task<TodoItem?> GetByStatusAsync(TodoStatus status)
         => await _context.TodoItems.FirstOrDefaultAsync(i => i.Status == status);
@@ -33,7 +35,8 @@ public class TodoItemRepository : ITodoItemRepository
 
     public Task UpdateAsync(TodoItem item)
     {
-        throw new NotImplementedException();
+        _context.TodoItems.Update(item);
+        return Task.CompletedTask;
     }
 
     public Task SaveChangesAsync()

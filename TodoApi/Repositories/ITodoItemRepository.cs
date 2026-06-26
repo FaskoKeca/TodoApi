@@ -5,7 +5,7 @@ namespace TodoApi.Repositories;
 public interface ITodoItemRepository
 {
     Task<TodoItem?> GetByIdAsync(int id);
-    Task<TodoItem?> GetByListIdAsync(int id);
+    Task<List<TodoItem>> GetByListIdAsync(int listId);
     Task<TodoItem?> GetByStatusAsync(TodoStatus status);
     Task AddAsync(TodoItem item);
     Task DeleteAsync(TodoItem item);
