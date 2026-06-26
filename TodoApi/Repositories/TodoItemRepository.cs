@@ -3,7 +3,7 @@ using TodoApi.Data;
 
 namespace TodoApi.Repositories;
 
-public class TodoItemRepository
+public class TodoItemRepository : ITodoItemRepository
 {
     private readonly AppDbContext _context;
 
@@ -29,6 +29,11 @@ public class TodoItemRepository
     {
         _context.TodoItems.Remove(item);
         return Task.CompletedTask;
+    }
+
+    public Task UpdateAsync(TodoItem item)
+    {
+        throw new NotImplementedException();
     }
 
     public Task SaveChangesAsync()

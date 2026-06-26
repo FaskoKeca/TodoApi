@@ -17,7 +17,6 @@
       <Folder Include="Common\" />
       <Folder Include="Controllers\" />
       <Folder Include="Dtos\" />
-      <Folder Include="Providers\" />
     </ItemGroup>
 
 </Project>

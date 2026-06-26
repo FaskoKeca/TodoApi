@@ -8,7 +8,7 @@ public class TodoList
 
         public string? Description { get; set; }
 
-        public DateTime CreatedUtc { get; set; }
+        public DateTime Created { get; set; }
 
         public bool IsArchived { get; set; }
 
