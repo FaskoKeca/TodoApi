@@ -20,7 +20,7 @@ public class TodoItem
 
     public DateTime? Completed { get; set; }
 
-    public DateTime CreatedUtc { get; set; }
+    public DateTime Created { get; set; }
 
     public ICollection<TodoItemTag> TodoItemTags { get; set; } = new List<TodoItemTag>();
 }

@@ -18,6 +18,15 @@ public class TodoListRepository : ITodoListRepository
 
     public Task<TodoList?> GetByIdAsync(int id)
         => _context.TodoLists.FirstOrDefaultAsync(l => l.Id == id);
+    
+    public async Task<bool> CheckIfNameExists(string name)
+    {
+        if (_context.TodoLists.FirstOrDefaultAsync(l => l.Name == name) != null)
+        {
+            return true;
+        }
+        return false;
+    }
 
     public async Task AddAsync(TodoList list)
         => await _context.TodoLists.AddAsync(list);
