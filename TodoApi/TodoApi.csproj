@@ -8,6 +8,16 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\" />
+      <Folder Include="Controllers\" />
+      <Folder Include="Domain\Entities\" />
+      <Folder Include="Dtos\" />
+      <Folder Include="Providers\" />
+      <Folder Include="Repositories\" />
     </ItemGroup>
 
 </Project>
