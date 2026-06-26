@@ -1,6 +1,7 @@
 using TodoApi.Data;
 using TodoApi.Repositories;
 using System.Linq;
+using TodoApi.Common.Exceptions;
 
 namespace TodoApi.Providers;
 
@@ -40,6 +41,19 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
     public Task<TodoItem?> GetByIdAsync(int id)
         => itemRepo.GetByIdAsync(id);
 
+    public async Task<List<TodoItem>> GetByListIdAsync(int listId, TodoStatus? status)
+    {
+        var list = await listRepo.GetByIdAsync(listId)
+                   ?? throw new NotFoundException("List not found");
+
+        var items = await itemRepo.GetByListIdAsync(listId);
+
+        if (status.HasValue)
+            items = items.Where(x => x.Status == status.Value).ToList();
+
+        return items;
+    }
+    
     public async Task<TodoItem> CreateAsync(
         int listId,
         string title,
@@ -108,22 +122,22 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         return item;
     }
 
-    public async Task<TodoItem> AssignTagsAsync(int itemId, List<string> tagNames)
+    public async Task<TodoItem> AssignTagsAsync(int itemId, List<int> tagIds)
     {
         var item = await itemRepo.GetByIdAsync(itemId)
                    ?? throw new KeyNotFoundException("Item not found.");
 
-        foreach (var raw in tagNames)
+        foreach (var raw in tagIds)
         {
-            var name = raw.Trim().ToLower();
+            var id = raw;
 
-            var tag = await tagRepo.GetByNameAsync(name);
+            var tag = await tagRepo.GetByIdAsync(id);
 
             if (tag == null)
             {
                 tag = new Tag
                 {
-                    Name = name
+                    Name = tag.Name
                 };
 
                 await tagRepo.AddAsync(tag);

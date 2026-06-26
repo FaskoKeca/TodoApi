@@ -10,6 +10,8 @@ public interface ITodoItemProvider
         bool overdueOnly = false);
 
     Task<TodoItem?> GetByIdAsync(int id);
+    
+    Task<List<TodoItem>> GetByListIdAsync(int listId, TodoStatus? status);
 
     Task<TodoItem> CreateAsync(
         int listId,
@@ -22,7 +24,7 @@ public interface ITodoItemProvider
 
     Task<TodoItem> CompleteAsync(int itemId);
 
-    Task<TodoItem> AssignTagsAsync(int itemId, List<string> tagNames);
+    Task<TodoItem> AssignTagsAsync(int itemId, List<int> tagIds);
 
     Task DeleteAsync(int itemId);
 }

@@ -22,9 +22,6 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"EXCEPTION TYPE: {ex.GetType().Name}");
-            Console.WriteLine($"MESSAGE: {ex.Message}");
-            
             await HandleExceptionAsync(context, ex);
         }
     }
