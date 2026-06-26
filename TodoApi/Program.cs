@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using TodoApi.Data;
 using TodoApi.Providers;
 using TodoApi.Repositories;
+using TodoApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +23,14 @@ builder.Services.AddScoped<ITagProvider, TagProvider>();
 
 
 
+
 var app = builder.Build();
 
 
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.MapControllers();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 
 

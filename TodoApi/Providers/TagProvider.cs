@@ -13,7 +13,7 @@ public class TagProvider(ITagRepository repo) : ITagProvider
         name = name.Trim().ToLower();
         var existing = await repo.GetByNameAsync(name);
         if (existing != null)
-            throw new Exception($"TodoList with name {name} already exists");
+            throw new InvalidOperationException("TodoList with name already exists");
 
         var tag = new Tag
         {

@@ -15,9 +15,9 @@ public class TodoListsController : ControllerBase
         _provider = provider;
     }
 
-    // -------------------------
+    
     // GET: /api/lists
-    // -------------------------
+    
     [HttpGet]
     public async Task<ActionResult<List<TodoList>>> GetAll()
     {
@@ -25,10 +25,10 @@ public class TodoListsController : ControllerBase
         return Ok(lists);
     }
 
-    // -------------------------
+    
     // GET: /api/lists/{id}
-    // -------------------------
-    [HttpGet("{id:int}")]
+    
+    [HttpGet("{id}")]
     public async Task<ActionResult<TodoList>> GetById(int id)
     {
         var list = await _provider.GetByIdAsync(id);
@@ -39,9 +39,9 @@ public class TodoListsController : ControllerBase
         return Ok(list);
     }
 
-    // -------------------------
+    
     // POST: /api/lists
-    // -------------------------
+    
     public record CreateTodoListRequest(string Name, string? Description);
 
     [HttpPost]
@@ -62,10 +62,10 @@ public class TodoListsController : ControllerBase
         }
     }
 
-    // -------------------------
+    
     // POST: /api/lists/{id}/archive
-    // -------------------------
-    [HttpPost("{id:int}/archive")]
+    
+    [HttpPost("archive/{id}")]
     public async Task<IActionResult> Archive(int id)
     {
         try
@@ -83,10 +83,10 @@ public class TodoListsController : ControllerBase
         }
     }
 
-    // -------------------------
+    
     // DELETE: /api/lists/{id}
-    // -------------------------
-    [HttpDelete("{id:int}")]
+    
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         try
