@@ -1,0 +1,106 @@
+using Microsoft.AspNetCore.Mvc;
+using TodoApi.Data;
+using TodoApi.Providers;
+
+namespace TodoApi.Controllers;
+
+[ApiController]
+[Route("api/lists")]
+public class TodoListsController : ControllerBase
+{
+    private readonly ITodoListProvider _provider;
+
+    public TodoListsController(ITodoListProvider provider)
+    {
+        _provider = provider;
+    }
+
+    // -------------------------
+    // GET: /api/lists
+    // -------------------------
+    [HttpGet]
+    public async Task<ActionResult<List<TodoList>>> GetAll()
+    {
+        var lists = await _provider.GetAllAsync();
+        return Ok(lists);
+    }
+
+    // -------------------------
+    // GET: /api/lists/{id}
+    // -------------------------
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TodoList>> GetById(int id)
+    {
+        var list = await _provider.GetByIdAsync(id);
+
+        if (list == null)
+            return NotFound();
+
+        return Ok(list);
+    }
+
+    // -------------------------
+    // POST: /api/lists
+    // -------------------------
+    public record CreateTodoListRequest(string Name, string? Description);
+
+    [HttpPost]
+    public async Task<ActionResult<TodoList>> Create(CreateTodoListRequest request)
+    {
+        try
+        {
+            var created = await _provider.CreateAsync(request.Name, request.Description);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = created.Id },
+                created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
+    // -------------------------
+    // POST: /api/lists/{id}/archive
+    // -------------------------
+    [HttpPost("{id:int}/archive")]
+    public async Task<IActionResult> Archive(int id)
+    {
+        try
+        {
+            await _provider.ArchiveAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return UnprocessableEntity(ex.Message);
+        }
+    }
+
+    // -------------------------
+    // DELETE: /api/lists/{id}
+    // -------------------------
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _provider.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+}
