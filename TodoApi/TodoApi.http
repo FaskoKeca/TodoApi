@@ -1,6 +1,83 @@
 @TodoApi_HostAddress = http://localhost:5198
 
-GET {{TodoApi_HostAddress}}/weatherforecast/
-Accept: application/json
 
-###
+
+#POST {{host}}/lists
+#Content-Type: application/json
+#
+#{
+#  "title": "Shopping"
+#}
+#
+#> {%
+#    client.global.set("createdListId", response.body.id);
+#%}
+
+
+
+
+### Create List
+# @name createList
+POST {{TodoApi_HostAddress}}/api/lists
+Content-Type: application/json
+
+{
+  "name": "Example List",
+  "description": "Ludite raboti"
+}
+
+> {%
+    client.global.set("createdListId", response.body.id);
+%}
+
+### Get List
+# @name getList
+
+GET {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+Content-Type: application/json
+
+{
+}
+
+> {%
+    client.test("Correct id", function() {
+        client.assert(
+            response.body.id == client.global.get("createdListId")
+        );
+    });
+%}
+### Archive list
+# @name archiveList
+
+POST {{TodoApi_HostAddress}}/api/lists/archive/{{createdListId}}
+Content-Type: application/json
+
+{
+}
+
+
+
+### Delete List
+# @name deleteList
+
+DELETE {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+Content-Type: application/json
+
+{
+}
+
+
+### Get List
+# @name confirmListDeletion
+
+GET {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+Content-Type: application/json
+
+{
+}
+
+> {%
+    client.test("Returns 404 Not Found", function () {
+        client.assert(response.status === 404);
+    });
+%}

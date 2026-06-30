@@ -32,7 +32,7 @@ public class ExceptionHandlingMiddleware
         {
             NotFoundException => HttpStatusCode.NotFound,
             ConflictException => HttpStatusCode.Conflict,
-            BusinessRuleException => (HttpStatusCode)422,
+            BusinessRuleException => (HttpStatusCode)422, //Unprocessable content
             ArgumentException => HttpStatusCode.BadRequest,
             _ => HttpStatusCode.InternalServerError
         };

@@ -14,9 +14,8 @@ public class TagsController : ControllerBase
     {
         _provider = provider;
     }
-
     
-    // GET: /api/tags
+    //GET: /api/tags
     
     [HttpGet]
     public async Task<ActionResult<List<Tag>>> GetAll()
@@ -24,9 +23,8 @@ public class TagsController : ControllerBase
         var tags = await _provider.GetAllAsync();
         return Ok(tags);
     }
-
     
-    // POST: /api/tags
+    //POST: /api/tags
     
     public record CreateTagRequest(string Name);
 
@@ -47,9 +45,8 @@ public class TagsController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-
     
-    // POST: /api/tags/merge
+    //POST: /api/tags/merge
     
     public record MergeTagsRequest(int SourceTagId, int TargetTagId);
 
@@ -73,9 +70,8 @@ public class TagsController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-
     
-    // DELETE: /api/tags/{id}
+    //DELETE: /api/tags/{id}
     
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)

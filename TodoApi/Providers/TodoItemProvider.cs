@@ -127,9 +127,9 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         var item = await itemRepo.GetByIdAsync(itemId)
                    ?? throw new KeyNotFoundException("Item not found.");
 
-        foreach (var raw in tagIds)
+        foreach (var y in tagIds)
         {
-            var id = raw;
+            var id = y;
 
             var tag = await tagRepo.GetByIdAsync(id);
 

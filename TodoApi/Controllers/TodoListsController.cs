@@ -14,9 +14,8 @@ public class TodoListsController : ControllerBase
     {
         _provider = provider;
     }
-
     
-    // GET: /api/lists
+    //GET: /api/lists
     
     [HttpGet]
     public async Task<ActionResult<List<TodoList>>> GetAll()
@@ -24,9 +23,8 @@ public class TodoListsController : ControllerBase
         var lists = await _provider.GetAllAsync();
         return Ok(lists);
     }
-
     
-    // GET: /api/lists/{id}
+    //GET: /api/lists/{id}
     
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoList>> GetById(int id)
@@ -38,9 +36,8 @@ public class TodoListsController : ControllerBase
 
         return Ok(list);
     }
-
     
-    // POST: /api/lists
+    //POST: /api/lists
     
     public record CreateTodoListRequest(string Name, string? Description);
 
@@ -61,9 +58,8 @@ public class TodoListsController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-
     
-    // POST: /api/lists/{id}/archive
+    //POST: /api/lists/{id}/archive
     
     [HttpPost("archive/{id}")]
     public async Task<IActionResult> Archive(int id)
@@ -82,9 +78,8 @@ public class TodoListsController : ControllerBase
             return UnprocessableEntity(ex.Message);
         }
     }
-
     
-    // DELETE: /api/lists/{id}
+    //DELETE: /api/lists/{id}
     
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
