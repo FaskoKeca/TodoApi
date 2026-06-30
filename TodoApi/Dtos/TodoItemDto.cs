@@ -7,8 +7,7 @@ public class TodoItemDto
     public int Id { get; set; }
 
     public int TodoListId { get; set; }
-
-    public TodoList TodoList { get; set; } = null!;
+    
 
     public string Title { get; set; } = string.Empty;
 

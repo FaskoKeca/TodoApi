@@ -1,4 +1,5 @@
 using TodoApi.Data;
+using TodoApi.Dtos;
 
 namespace TodoApi.Providers;
 
@@ -11,7 +12,7 @@ public interface ITodoItemProvider
 
     Task<TodoItem?> GetByIdAsync(int id);
     
-    Task<List<TodoItem>> GetByListIdAsync(int listId, TodoStatus? status);
+    Task<List<TodoItemDto>> GetByListIdAsync(int listId, TodoStatus? status);
 
     Task<TodoItem> CreateAsync(
         int listId,

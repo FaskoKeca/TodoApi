@@ -40,55 +40,12 @@ Content-Type: application/json
 }
 
 > {%
-    client.test("Correct id", function () {
+    client.test("Correct id", function() {
         client.assert(
             response.body.id == client.global.get("createdListId")
         );
     });
 %}
-
-### Create Item in List
-# @name createItem
-
-POST {{TodoApi_HostAddress}}/api/lists/{{createdListId}}/items
-Content-Type: application/json
-
-{
-  "title": "Develop",
-  "notes": "wow",
-  "priority": 1,
-  "due": "2026-07-15T14:30:00Z"
-}
-> {%
-    client.global.set("createdItemId", response.body.id);
-%}
-
-###Verify Item is Created
-# @name itemCreated
-
-GET {{TodoApi_HostAddress}}/api/items/{{createdItemId}}
-Content-Type: application/json
-{
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Archive list
 # @name archiveList
 
@@ -111,7 +68,7 @@ Content-Type: application/json
 
 
 ### Get List
-# @name getList
+# @name confirmListDeletion
 
 GET {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
 Content-Type: application/json

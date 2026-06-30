@@ -25,6 +25,7 @@ public class TagsController : ControllerBase
         var result = tags.Select(t => new TagDto
         {
             Id = t.Id,
+            Name = t.Name,
         }).ToList();
 
         return Ok(result);
@@ -35,7 +36,7 @@ public class TagsController : ControllerBase
     public record CreateTagRequest(string Name);
 
     [HttpPost]
-    public async Task<ActionResult<TagDto>> Create(CreateTagRequest request)
+    public async Task<ActionResult<TagDto>> Create([FromBody]CreateTagRequest request)
     {
         try
         {

@@ -20,10 +20,20 @@ public class TodoItemsController : ControllerBase
     //GET: /api/items/{id}
     
     [HttpGet("items/{id}")]
-    public async Task<ActionResult<TodoItem>> GetById(int id)
+    public async Task<ActionResult<TodoItemDto>> GetById(int id)
     {
         var item = await _itemProvider.GetByIdAsync(id);
-        return Ok(item);
+        var dto = new TodoItemDto
+        {
+            Id = item.Id,
+            TodoListId = item.TodoListId,
+            Title = item.Title,
+            Notes = item.Notes,
+            Priority = item.Priority,
+            Due = item.Due,
+            Status  = item.Status
+        };
+        return Ok(dto);
     }
 
     
@@ -36,17 +46,18 @@ public class TodoItemsController : ControllerBase
         [FromQuery] TodoStatus? status)
     {
         var items = await _itemProvider.GetByListIdAsync(listId, status);
-        return Ok (items.Select(list => new TodoItemDto
+        var dto = items.Select(list => new TodoItemDto
         {
             Id = list.Id,
             TodoListId = list.TodoListId,
-            TodoList =  list.TodoList,
             Title = list.Title,
             Notes = list.Notes,
             Priority = list.Priority,
             Due = list.Due,
             TodoItemTags = list.TodoItemTags
-        }));
+        });
+        //return Ok (dto);
+        return Ok(new { debug = items });
     }
 
     
@@ -107,7 +118,17 @@ public class TodoItemsController : ControllerBase
     public async Task<ActionResult<TodoItem>> Complete(int id)
     {
         var item = await _itemProvider.CompleteAsync(id);
-        return Ok(item);
+        var dto = new TodoItemDto
+        {
+            Id = item.Id,
+            TodoListId = item.TodoListId,
+            Title = item.Title,
+            Notes = item.Notes,
+            Priority = item.Priority,
+            Due = item.Due,
+
+        };
+        return Ok(dto);
     }
     
     //POST: /api/items/{id}/tags
@@ -124,12 +145,11 @@ public class TodoItemsController : ControllerBase
         {
             Id = item.Id,
             TodoListId = item.TodoListId,
-            TodoList = item.TodoList,
             Title = item.Title,
             Notes = item.Notes,
             Priority = item.Priority,
             Due = item.Due,
-            TodoItemTags = item.TodoItemTags
+
         };
         return Ok(dto);
     }

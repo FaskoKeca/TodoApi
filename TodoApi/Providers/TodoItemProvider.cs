@@ -2,6 +2,7 @@ using TodoApi.Data;
 using TodoApi.Repositories;
 using System.Linq;
 using TodoApi.Common.Exceptions;
+using TodoApi.Dtos;
 
 namespace TodoApi.Providers;
 
@@ -41,7 +42,7 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
     public Task<TodoItem?> GetByIdAsync(int id)
         => itemRepo.GetByIdAsync(id);
 
-    public async Task<List<TodoItem>> GetByListIdAsync(int listId, TodoStatus? status)
+    public async Task<List<TodoItemDto>> GetByListIdAsync(int listId, TodoStatus? status)
     {
         var list = await listRepo.GetByIdAsync(listId)
                    ?? throw new NotFoundException("List not found");
@@ -51,7 +52,16 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         if (status.HasValue)
             items = items.Where(x => x.Status == status.Value).ToList();
 
-        return items;
+        return items.Select(x => new TodoItemDto
+        {
+            Id = x.Id,
+            TodoListId = x.TodoListId,
+            Title = x.Title,
+            Notes = x.Notes,
+            Priority = x.Priority,
+            Due = x.Due,
+            TodoItemTags = x.TodoItemTags
+        }).ToList();
     }
     
     public async Task<TodoItem> CreateAsync(
