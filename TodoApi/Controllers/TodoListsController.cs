@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
+using TodoApi.Dtos;
 using TodoApi.Providers;
 
 namespace TodoApi.Controllers;
@@ -18,23 +19,31 @@ public class TodoListsController : ControllerBase
     //GET: /api/lists
     
     [HttpGet]
-    public async Task<ActionResult<List<TodoList>>> GetAll()
+    public async Task<ActionResult<List<TodoListDto>>> GetAll()
     {
         var lists = await _provider.GetAllAsync();
-        return Ok(lists);
+        return Ok (lists.Select(list => new TodoListDto
+        {
+            Id = list.Id,
+            Name = list.Name
+        }));
     }
     
     //GET: /api/lists/{id}
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<TodoList>> GetById(int id)
+    public async Task<ActionResult<TodoListDto>> GetById(int id)
     {
         var list = await _provider.GetByIdAsync(id);
 
         if (list == null)
             return NotFound();
 
-        return Ok(list);
+        return Ok(new TodoListDto
+        {
+            Id =  list.Id,
+            Name = list.Name
+        });
     }
     
     //POST: /api/lists
@@ -42,11 +51,18 @@ public class TodoListsController : ControllerBase
     public record CreateTodoListRequest(string Name, string? Description);
 
     [HttpPost]
-    public async Task<ActionResult<TodoList>> Create(CreateTodoListRequest request)
+    public async Task<ActionResult<TodoListDto>> Create(CreateTodoListRequest request)
     {
         try
         {
             var created = await _provider.CreateAsync(request.Name, request.Description);
+
+            var dto = new TodoListDto
+            {
+                Id = created.Id,
+                Name = created.Name,
+                Description = created.Description
+            };
 
             return CreatedAtAction(
                 nameof(GetById),
