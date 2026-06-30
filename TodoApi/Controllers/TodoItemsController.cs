@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
+using TodoApi.Dtos;
 using TodoApi.Providers;
 
 namespace TodoApi.Controllers;
@@ -30,12 +31,22 @@ public class TodoItemsController : ControllerBase
     //optional query: status, overdue
     
     [HttpGet("lists/{listId}/items")]
-    public async Task<ActionResult<List<TodoItem>>> GetByList(
+    public async Task<ActionResult<List<TodoItemDto>>> GetByList(
         int listId,
         [FromQuery] TodoStatus? status)
     {
         var items = await _itemProvider.GetByListIdAsync(listId, status);
-        return Ok(items);
+        return Ok (items.Select(list => new TodoItemDto
+        {
+            Id = list.Id,
+            TodoListId = list.TodoListId,
+            TodoList =  list.TodoList,
+            Title = list.Title,
+            Notes = list.Notes,
+            Priority = list.Priority,
+            Due = list.Due,
+            TodoItemTags = list.TodoItemTags
+        }));
     }
 
     
@@ -49,7 +60,7 @@ public class TodoItemsController : ControllerBase
     );
 
     [HttpPost("lists/{listId}/items")]
-    public async Task<ActionResult<TodoItem>> Create(
+    public async Task<ActionResult<TodoItemDto>> Create(
         int listId,
         CreateTodoItemRequest request)
     {
@@ -61,10 +72,19 @@ public class TodoItemsController : ControllerBase
             request.Due
         );
 
+        var dto = new TodoItemDto
+        {
+            TodoListId =  created.TodoListId,
+            Title = created.Title,
+            Notes = created.Notes,
+            Priority = created.Priority,
+            Due = created.Due
+        };
+
         return CreatedAtAction(
             nameof(GetById),
             new { id = created.Id },
-            created
+            dto
         );
     }
     
@@ -100,7 +120,18 @@ public class TodoItemsController : ControllerBase
         AssignTagsRequest request)
     {
         var item = await _itemProvider.AssignTagsAsync(id, request.TagIds);
-        return Ok(item);
+        var dto = new TodoItemDto
+        {
+            Id = item.Id,
+            TodoListId = item.TodoListId,
+            TodoList = item.TodoList,
+            Title = item.Title,
+            Notes = item.Notes,
+            Priority = item.Priority,
+            Due = item.Due,
+            TodoItemTags = item.TodoItemTags
+        };
+        return Ok(dto);
     }
     
     //DELETE: /api/items/{id}

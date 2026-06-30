@@ -20,9 +20,5 @@ public class TodoItemDto
 
     public DateTime? Due { get; set; }
 
-    public DateTime? Completed { get; set; }
-
-    public DateTime Created { get; set; }
-
     public ICollection<TodoItemTag> TodoItemTags { get; set; } = new List<TodoItemTag>();
 }
