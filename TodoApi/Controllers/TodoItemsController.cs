@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
 using TodoApi.Domain.Entities;
@@ -32,7 +33,13 @@ public class TodoItemsController : ControllerBase
             Notes = item.Notes,
             Priority = item.Priority,
             Due = item.Due,
-            Status  = item.Status
+            Status  = item.Status,
+            TodoItemTags = item.TodoItemTags.Select(t => new TodoItemTagsDto()
+            {
+                TodoItemId = t.TodoItemId,
+                TagId = t.TagId,
+                Tag = t.Tag
+            }).ToList()
         };
         return Ok(dto);
     }
@@ -43,7 +50,7 @@ public class TodoItemsController : ControllerBase
     
     [HttpGet("lists/{listId}/items")]
     public async Task<ActionResult<List<TodoItemDto>>> GetByList(
-        int listId,
+        [Required]int listId,
         [FromQuery] TodoStatus? status)
     {
         var items = await _itemProvider.GetByListIdAsync(listId, status);
@@ -57,8 +64,7 @@ public class TodoItemsController : ControllerBase
             Due = list.Due,
             TodoItemTags = list.TodoItemTags
         });
-        //return Ok (dto);
-        return Ok(new { debug = items });
+        return Ok (dto);
     }
 
     
@@ -102,34 +108,23 @@ public class TodoItemsController : ControllerBase
     
     //PUT: /api/items/{id}/status
     
-    public record UpdateStatusRequest(TodoStatus Status);
 
     [HttpPut("items/{id}/status")]
     public async Task<IActionResult> UpdateStatus(
         int id,
-        UpdateStatusRequest request)
+        TodoStatus status)
     {
-        await _itemProvider.UpdateStatusAsync(id, request.Status);
+        await _itemProvider.UpdateStatusAsync(id, status);
         return NoContent();
     }
     
     //POST: /api/items/{id}/complete
     
     [HttpPost("items/{id}/complete")]
-    public async Task<ActionResult<TodoItem>> Complete(int id)
+    public async Task<ActionResult> Complete(int id)
     {
-        var item = await _itemProvider.CompleteAsync(id);
-        var dto = new TodoItemDto
-        {
-            Id = item.Id,
-            TodoListId = item.TodoListId,
-            Title = item.Title,
-            Notes = item.Notes,
-            Priority = item.Priority,
-            Due = item.Due,
-
-        };
-        return Ok(dto);
+        await _itemProvider.UpdateStatusAsync(id, TodoStatus.Completed);
+        return Ok();
     }
     
     

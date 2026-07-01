@@ -9,6 +9,8 @@ public interface ITagProvider
 
     Task<Tag> CreateAsync(string name);
 
+    Task<Tag> GetByIdAsync(int id);
+
     Task<int> MergeAsync(int sourceTagId, int targetTagId);
 
     Task<int> DeleteAsync(int tagId);

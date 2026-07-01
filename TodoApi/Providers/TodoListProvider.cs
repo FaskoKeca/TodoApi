@@ -1,4 +1,3 @@
-using TodoApi.Data;
 using TodoApi.Domain.Entities;
 using TodoApi.Repositories;
 
@@ -53,10 +52,10 @@ public class TodoListProvider(ITodoListRepository repo) : ITodoListProvider
         if(list.Items.Any(i => i.Status != TodoStatus.Completed))
             throw new InvalidOperationException("Cannot delete list with open items.");
         
-        if(list.IsArchived == false)
+        if(!list.IsArchived)
             throw new InvalidOperationException("Cannot delete an unarchived list.");
         
-        await repo.DeleteAsync(list);
+        repo.Delete(list);
         await repo.SaveChangesAsync();
         return true;
     }

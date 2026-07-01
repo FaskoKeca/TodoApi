@@ -9,8 +9,8 @@ public interface ITodoItemRepository
     Task<List<TodoItem>> GetByListIdAsync(int listId);
     Task<TodoItem?> GetByStatusAsync(TodoStatus status);
     Task AddAsync(TodoItem item);
-    Task DeleteAsync(TodoItem item);
-    Task UpdateAsync(TodoItem item);
+    void Delete(TodoItem item);
+    void Update(TodoItem item);
     Task SaveChangesAsync();
     Task<bool> ItemTagExistsAsync(int itemId, int tagId);
     Task AddItemTagAsync(int itemId, int tagId);

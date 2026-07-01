@@ -10,7 +10,7 @@ public interface ITagRepository
     Task<Tag?> GetByNameAsync(string name);
 
     Task AddAsync(Tag tag);
-    Task DeleteAsync(Tag tag);
+    void Delete(Tag tag);
     
 
 

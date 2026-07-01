@@ -9,5 +9,5 @@ public class TagDto
 
     public string Name { get; set; } = string.Empty;
 
-    public ICollection<TodoItemTag> TodoItemTags { get; set; } = new List<TodoItemTag>();
+    public List<TodoItemTagsDto> TodoItemTags { get; set; } = new List<TodoItemTagsDto>();
 }

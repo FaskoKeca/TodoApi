@@ -4,40 +4,25 @@ using TodoApi.Domain.Entities;
 
 namespace TodoApi.Repositories;
 
-public class TodoListRepository : ITodoListRepository
+public class TodoListRepository(AppDbContext context) : ITodoListRepository
 {
-    private readonly AppDbContext _context;
+    public async Task<List<TodoList>> GetAllAsync()
+        => await context.TodoLists.AsNoTracking().ToListAsync();
 
-    public TodoListRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    public async Task<TodoList?> GetByIdAsync(int id)
+        => await context.TodoLists.FirstOrDefaultAsync(l => l.Id == id);
 
-
-    public Task<List<TodoList>> GetAllAsync()
-        => _context.TodoLists.ToListAsync();
-
-    public Task<TodoList?> GetByIdAsync(int id)
-        => _context.TodoLists.FirstOrDefaultAsync(l => l.Id == id);
-    
     public async Task<bool> CheckIfNameExists(string name)
-    {
-        if (_context.TodoLists.FirstOrDefaultAsync(l => l.Name == name) != null)
-        {
-            return true;
-        }
-        return false;
-    }
+        => await context.TodoLists.FirstOrDefaultAsync(l => l.Name == name) != null;
+
 
     public async Task AddAsync(TodoList list)
-        => await _context.TodoLists.AddAsync(list);
+        => await context.TodoLists.AddAsync(list);
 
-    public Task DeleteAsync(TodoList list)
-    {
-        _context.TodoLists.Remove(list);
-        return Task.CompletedTask;
-    }
+    public void Delete(TodoList list)
+        => context.TodoLists.Remove(list);
+    
 
-    public Task SaveChangesAsync()
-        => _context.SaveChangesAsync();
+    public async Task SaveChangesAsync()
+        => await context.SaveChangesAsync();
 }

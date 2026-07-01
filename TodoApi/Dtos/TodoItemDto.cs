@@ -20,5 +20,5 @@ public class TodoItemDto
 
     public DateTime? Due { get; set; }
 
-    public ICollection<TodoItemTag> TodoItemTags { get; set; } = new List<TodoItemTag>();
+    public List<TodoItemTagsDto> TodoItemTags { get; set; } = new List<TodoItemTagsDto>();
 }

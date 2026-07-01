@@ -7,21 +7,14 @@ namespace TodoApi.Controllers;
 
 [ApiController]
 [Route("api/lists")]
-public class TodoListsController : ControllerBase
+public class TodoListsController(ITodoListProvider provider) : ControllerBase
 {
-    private readonly ITodoListProvider _provider;
-
-    public TodoListsController(ITodoListProvider provider)
-    {
-        _provider = provider;
-    }
-    
     //GET: /api/lists
     
     [HttpGet]
     public async Task<ActionResult<List<TodoListDto>>> GetAll()
     {
-        var lists = await _provider.GetAllAsync();
+        var lists = await provider.GetAllAsync();
         return Ok (lists.Select(list => new TodoListDto
         {
             Id = list.Id,
@@ -34,7 +27,7 @@ public class TodoListsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoListDto>> GetById(int id)
     {
-        var list = await _provider.GetByIdAsync(id);
+        var list = await provider.GetByIdAsync(id);
 
         if (list == null)
             return NotFound();
@@ -55,7 +48,7 @@ public class TodoListsController : ControllerBase
     {
         try
         {
-            var created = await _provider.CreateAsync(request.Name, request.Description);
+            var created = await provider.CreateAsync(request.Name, request.Description);
 
             var dto = new TodoListDto
             {
@@ -82,7 +75,7 @@ public class TodoListsController : ControllerBase
     {
         try
         {
-            await _provider.ArchiveAsync(id);
+            await provider.ArchiveAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -102,7 +95,7 @@ public class TodoListsController : ControllerBase
     {
         try
         {
-            await _provider.DeleteAsync(id);
+            await provider.DeleteAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)

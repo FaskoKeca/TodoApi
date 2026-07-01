@@ -23,8 +23,7 @@ public interface ITodoItemProvider
         DateTime? dueDate);
 
     Task UpdateStatusAsync(int itemId, TodoStatus status);
-
-    Task<TodoItem> CompleteAsync(int itemId);
+    
 
     Task DeleteAsync(int itemId);
 }

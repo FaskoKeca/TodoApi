@@ -1,9 +1,7 @@
-using TodoApi.Data;
-using TodoApi.Repositories;
-using System.Linq;
 using TodoApi.Common.Exceptions;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
+using TodoApi.Repositories;
 
 namespace TodoApi.Providers;
 
@@ -15,8 +13,8 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         TodoStatus? status = null,
         bool overdueOnly = false)
     {
-        var list = await listRepo.GetByIdAsync(listId)
-                   ?? throw new KeyNotFoundException("List not found.");
+        if (await listRepo.GetByIdAsync(listId) is null)
+                   throw new KeyNotFoundException("List not found.");
 
         var items = await itemRepo.GetByListIdAsync(listId);
 
@@ -45,10 +43,9 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
 
     public async Task<List<TodoItemDto>> GetByListIdAsync(int listId, TodoStatus? status)
     {
-        var list = await listRepo.GetByIdAsync(listId)
-                   ?? throw new NotFoundException("List not found");
 
-        var items = await itemRepo.GetByListIdAsync(listId);
+        var items = await itemRepo.GetByListIdAsync(listId)
+                    ?? throw new NotFoundException("List not found");
 
         if (status.HasValue)
             items = items.Where(x => x.Status == status.Value).ToList();
@@ -62,6 +59,13 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
             Priority = x.Priority,
             Due = x.Due,
             TodoItemTags = x.TodoItemTags
+                .Select(t => new TodoItemTagsDto
+                {
+                    TodoItemId = t.TodoItemId,
+                    TagId = t.TagId,
+                    Tag = t.Tag
+                })
+                .ToList()
         }).ToList();
     }
     
@@ -116,29 +120,14 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
 
         await itemRepo.SaveChangesAsync();
     }
-
-    public async Task<TodoItem> CompleteAsync(int itemId)
-    {
-        var item = await itemRepo.GetByIdAsync(itemId)
-                   ?? throw new KeyNotFoundException("Item not found.");
-
-        if (item.Status == TodoStatus.Completed)
-            throw new InvalidOperationException("Item already completed.");
-
-        item.Status = TodoStatus.Completed;
-        item.Completed = DateTime.Now;
-
-        await itemRepo.SaveChangesAsync();
-
-        return item;
-    }
+    
 
     public async Task DeleteAsync(int itemId)
     {
         var item = await itemRepo.GetByIdAsync(itemId)
                    ?? throw new KeyNotFoundException("Item not found.");
 
-        await itemRepo.DeleteAsync(item);
+        itemRepo.Delete(item);
         await itemRepo.SaveChangesAsync();
     }
 }

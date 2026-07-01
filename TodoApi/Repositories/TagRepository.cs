@@ -4,41 +4,34 @@ using TodoApi.Domain.Entities;
 
 namespace TodoApi.Repositories;
 
-public class TagRepository : ITagRepository
+public class TagRepository(AppDbContext context) : ITagRepository
 {
-    private readonly AppDbContext _context;
-
-    public TagRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-    
-    public Task<List<Tag>> GetAllAsync()
-        => _context.Tags
+    public async Task<List<Tag>> GetAllAsync()
+        => await context.Tags
+            .AsNoTracking()
             .Include(t => t.TodoItemTags)
             .ThenInclude(tt => tt.TodoItem)
             .ToListAsync();
 
-    public Task<Tag?> GetByIdAsync(int id)
-        => _context.Tags
+    public async Task<Tag?> GetByIdAsync(int id)
+        => await context.Tags
             .Include(t => t.TodoItemTags)
             .FirstOrDefaultAsync(t => t.Id == id);
 
-    public Task<Tag?> GetByNameAsync(string name)
-        => _context.Tags
+    public async Task<Tag?> GetByNameAsync(string name)
+        => await context.Tags
             .FirstOrDefaultAsync(t => t.Name == name);
 
     public async Task AddAsync(Tag tag)
-        => await _context.Tags.AddAsync(tag);
+        => await context.Tags.AddAsync(tag);
     
 
 
-    public Task DeleteAsync(Tag tag)
+    public void Delete(Tag tag)
     {
-        _context.Tags.Remove(tag);
-        return Task.CompletedTask;
+        context.Tags.Remove(tag);
     }
 
-    public Task SaveChangesAsync()
-        => _context.SaveChangesAsync();
+    public async Task SaveChangesAsync()
+        => await context.SaveChangesAsync();
 }

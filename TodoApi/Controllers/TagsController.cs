@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 using TodoApi.Providers;
 
@@ -43,7 +44,13 @@ public class TagsController : ControllerBase
             var dto = new TagDto
             {
                 Id = tag.Id,
-                Name = tag.Name
+                Name = tag.Name,
+                TodoItemTags = tag.TodoItemTags.Select(t => new TodoItemTagsDto()
+                {
+                    TodoItemId = t.TodoItemId,
+                    TagId = t.TagId,
+                    TodoItem = t.TodoItem
+                }).ToList()
             };
 
             return CreatedAtAction(nameof(GetAll), new { id = tag.Id }, dto);
@@ -98,8 +105,21 @@ public class TagsController : ControllerBase
         }
     }
 
+    [HttpGet("{tagId}")]
+    public async Task<ActionResult> GetByTagIdAsync(int tagId)
+    {
+        var tag = await _provider.GetByIdAsync(tagId);
+        /*var dto = new TagDto
+        {
+            Id = tag.Id,
+            Name = tag.Name,
+            TodoItemTags = tag.TodoItemTags;
+        };*/
+        return Ok(tag);
+    }
+
     // DELETE: /api/tags/{id}
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         try
