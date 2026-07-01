@@ -1,4 +1,4 @@
-namespace TodoApi.Data;
+namespace TodoApi.Domain.Entities;
 
 public class TodoList
 {

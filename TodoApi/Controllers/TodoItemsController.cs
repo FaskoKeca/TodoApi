@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
+using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 using TodoApi.Providers;
 
@@ -136,7 +137,7 @@ public class TodoItemsController : ControllerBase
     public record AssignTagsRequest(List<int> TagIds);
 
     [HttpPost("items/{id}/tags")]
-    public async Task<ActionResult<TodoItem>> AssignTags(
+    public async Task<ActionResult<TodoItemDto>> AssignTags(
         int id,
         AssignTagsRequest request)
     {

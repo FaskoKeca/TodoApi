@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
+using TodoApi.Domain.Entities;
 
 namespace TodoApi.Repositories;
 

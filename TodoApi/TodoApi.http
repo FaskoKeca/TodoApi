@@ -1,126 +1,107 @@
 @TodoApi_HostAddress = http://localhost:5198
 
 
+### lists
 
-#POST {{host}}/lists
-#Content-Type: application/json
-#
-#{
-#  "title": "Shopping"
-#}
-#
-#> {%
-#    client.global.set("createdListId", response.body.id);
-#%}
+GET {{TodoApi_HostAddress}}/api/lists
 
+###
 
+GET {{TodoApi_HostAddress}}/api/lists/1
 
+###
 
-### Create List
-# @name createList
 POST {{TodoApi_HostAddress}}/api/lists
 Content-Type: application/json
 
 {
-  "name": "Example List",
-  "description": "Ludite raboti"
+  "name": "Work ",
+  "description": "things"
 }
 
-> {%
-    client.global.set("createdListId", response.body.id);
-%}
+###
 
-### Get List
-# @name getList
+POST {{TodoApi_HostAddress}}/api/lists/archive/1
 
-GET {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+###
+
+DELETE {{TodoApi_HostAddress}}/api/lists/1
+
+
+### items
+
+GET {{TodoApi_HostAddress}}/api/items/1
+
+###
+
+GET {{TodoApi_HostAddress}}/api/lists/1/items
+
+###
+
+GET {{TodoApi_HostAddress}}/api/lists/1/items?status=Completed
+
+###
+
+POST {{TodoApi_HostAddress}}/api/lists/1/items
 Content-Type: application/json
 
 {
+  "title": "api",
+  "notes": "test",
+  "priority": "1",
+  "due": "2026-07-10T17:00:00"
 }
 
-> {%
-    client.test("Correct id", function () {
-        client.assert(
-            response.body.id == client.global.get("createdListId")
-        );
-    });
-%}
+###
 
-### Create Item in List
-# @name createItem
-
-POST {{TodoApi_HostAddress}}/api/lists/{{createdListId}}/items
+PUT {{TodoApi_HostAddress}}/api/items/1/status
 Content-Type: application/json
 
 {
-  "title": "Develop",
-  "notes": "wow",
-  "priority": 1,
-  "due": "2026-07-15T14:30:00Z"
-}
-> {%
-    client.global.set("createdItemId", response.body.id);
-%}
-
-###Verify Item is Created
-# @name itemCreated
-
-GET {{TodoApi_HostAddress}}/api/items/{{createdItemId}}
-Content-Type: application/json
-{
+  "status": "Completed"
 }
 
+###
 
+POST {{TodoApi_HostAddress}}/api/items/1/complete
 
+###
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Archive list
-# @name archiveList
-
-POST {{TodoApi_HostAddress}}/api/lists/archive/{{createdListId}}
+POST {{TodoApi_HostAddress}}/api/items/1/tags
 Content-Type: application/json
 
 {
+  "tagIds": [1, 2]
 }
 
+###
+
+DELETE {{TodoApi_HostAddress}}/api/items/1
 
 
-### Delete List
-# @name deleteList
+### tags
 
-DELETE {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+GET {{TodoApi_HostAddress}}/api/tags
+
+###
+
+POST {{TodoApi_HostAddress}}/api/tags
 Content-Type: application/json
 
 {
+  "name": "urgent"
 }
 
+###
 
-### Get List
-# @name getList
-
-GET {{TodoApi_HostAddress}}/api/lists/{{createdListId}}
+POST {{TodoApi_HostAddress}}/api/tags/merge
 Content-Type: application/json
 
 {
+  "sourceTagId": 2,
+  "targetTagId": 1
 }
 
-> {%
-    client.test("Returns 404 Not Found", function () {
-        client.assert(response.status === 404);
-    });
-%}
+###
+
+DELETE {{TodoApi_HostAddress}}/api/tags/2

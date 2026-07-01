@@ -5,20 +5,13 @@ using TodoApi.Common.Exceptions;
 
 namespace TodoApi.Middleware;
 
-public class ExceptionHandlingMiddleware
+public class ExceptionHandlingMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
@@ -32,8 +25,9 @@ public class ExceptionHandlingMiddleware
         {
             NotFoundException => HttpStatusCode.NotFound,
             ConflictException => HttpStatusCode.Conflict,
-            BusinessRuleException => (HttpStatusCode)422, //Unprocessable content
+            BusinessRuleException => HttpStatusCode.UnprocessableContent,
             ArgumentException => HttpStatusCode.BadRequest,
+            InvalidOperationException => HttpStatusCode.UnprocessableContent,
             _ => HttpStatusCode.InternalServerError
         };
 

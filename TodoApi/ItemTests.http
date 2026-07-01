@@ -1,0 +1,37 @@
+@TodoApi_HostAddress = http://localhost:5198
+
+
+
+
+### Create List
+# @name createList
+POST {{TodoApi_HostAddress}}/api/lists
+Content-Type: application/json
+
+{
+  "name": "Example List",
+  "description": "Ludite raboti"
+}
+
+> {%
+    client.global.set("createdListId", response.body.id);
+%}
+
+### Create Item in List
+# @name createItem
+
+POST {{TodoApi_HostAddress}}/api/lists/{{createdListId}}/items
+Content-Type: application/json
+
+{
+  "title": "Develop",
+  "notes": "wow",
+  "priority": 1,
+  "due": "2026-07-15T14:30:00Z"
+}
+> {%
+    client.global.set("createdItemId", response.body.id);
+%}
+
+
+###

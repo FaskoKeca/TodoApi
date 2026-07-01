@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
+using TodoApi.Domain.Entities;
 
 namespace TodoApi.Repositories;
 
@@ -13,7 +14,9 @@ public class TodoItemRepository : ITodoItemRepository
     }
 
     public Task<TodoItem?> GetByIdAsync(int id)
-        => _context.TodoItems.FirstOrDefaultAsync(l => l.Id == id);
+        => _context.TodoItems
+            .Include(x => x.TodoItemTags)
+            .FirstOrDefaultAsync(x => x.Id == id);
     
     public async Task<List<TodoItem>> GetByListIdAsync(int id)
         => await _context.TodoItems
@@ -31,6 +34,21 @@ public class TodoItemRepository : ITodoItemRepository
     {
         _context.TodoItems.Remove(item);
         return Task.CompletedTask;
+    }
+    
+    public async Task AddTagAsync(int itemId, int tagId)
+    {
+        await _context.TodoItemTags.AddAsync(new TodoItemTag
+        {
+            TodoItemId = itemId,
+            TagId = tagId
+        });
+    }
+
+    public Task<bool> ItemTagExistsAsync(int itemId, int tagId)
+    {
+        return _context.TodoItemTags
+            .AnyAsync(x => x.TodoItemId == itemId && x.TagId == tagId);
     }
 
     public Task UpdateAsync(TodoItem item)

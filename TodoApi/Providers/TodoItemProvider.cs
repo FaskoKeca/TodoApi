@@ -2,6 +2,7 @@ using TodoApi.Data;
 using TodoApi.Repositories;
 using System.Linq;
 using TodoApi.Common.Exceptions;
+using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 
 namespace TodoApi.Providers;
@@ -137,34 +138,18 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         var item = await itemRepo.GetByIdAsync(itemId)
                    ?? throw new KeyNotFoundException("Item not found.");
 
-        foreach (var y in tagIds)
+        foreach (var tagId in tagIds)
         {
-            var id = y;
-
-            var tag = await tagRepo.GetByIdAsync(id);
+            var tag = await tagRepo.GetByIdAsync(tagId);
 
             if (tag == null)
-            {
-                tag = new Tag
-                {
-                    Name = tag.Name
-                };
+                throw new KeyNotFoundException($"Tag {tagId} not found.");
 
-                await tagRepo.AddAsync(tag);
-                await tagRepo.SaveChangesAsync();
-            }
-
-            bool alreadyLinked = item.TodoItemTags
-                .Any(x => x.TagId == tag.Id);
-
-            if (alreadyLinked)
+            var exists = await itemRepo.ItemTagExistsAsync(itemId, tagId);
+            if (exists)
                 continue;
 
-            item.TodoItemTags.Add(new TodoItemTag
-            {
-                TodoItemId = item.Id,
-                TagId = tag.Id
-            });
+            await itemRepo.AddTagAsync(itemId, tagId);
         }
 
         await itemRepo.SaveChangesAsync();
