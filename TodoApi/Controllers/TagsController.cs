@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Data;
 using TodoApi.Dtos;
 using TodoApi.Providers;
 
@@ -16,41 +15,38 @@ public class TagsController : ControllerBase
         _provider = provider;
     }
 
-    //GET: /api/tags
-
+    // GET: /api/tags
     [HttpGet]
     public async Task<ActionResult<List<TagDto>>> GetAll()
     {
         var tags = await _provider.GetAllAsync();
+
         var result = tags.Select(t => new TagDto
         {
             Id = t.Id,
-            Name = t.Name,
+            Name = t.Name
         }).ToList();
 
         return Ok(result);
     }
 
-    //POST: /api/tags
-
+    // POST: /api/tags
     public record CreateTagRequest(string Name);
 
     [HttpPost]
-    public async Task<ActionResult<TagDto>> Create([FromBody]CreateTagRequest request)
+    public async Task<ActionResult<TagDto>> Create([FromBody] CreateTagRequest request)
     {
         try
         {
             var tag = await _provider.CreateAsync(request.Name);
+
             var dto = new TagDto
             {
                 Id = tag.Id,
                 Name = tag.Name
             };
 
-            return CreatedAtAction(
-                nameof(GetAll),
-                new { id = tag.Id },
-                dto);
+            return CreatedAtAction(nameof(GetAll), new { id = tag.Id }, dto);
         }
         catch (InvalidOperationException ex)
         {
@@ -58,12 +54,11 @@ public class TagsController : ControllerBase
         }
     }
 
-    //POST: /api/tags/merge
-
+    // POST: /api/tags/merge
     public record MergeTagsRequest(int SourceTagId, int TargetTagId);
 
     [HttpPost("merge")]
-    public async Task<ActionResult<MergeTagsResponse>> Merge(MergeTagsRequest request)
+    public async Task<IActionResult> Merge([FromBody] MergeTagsRequest request)
     {
         try
         {
@@ -85,17 +80,33 @@ public class TagsController : ControllerBase
             return Conflict(ex.Message);
         }
     }
+    
+    
+    public record AssignTagsToItemRequest(int TodoItemId, List<int> TagIds);
 
-    //DELETE: /api/tags/{id}
+    [HttpPost("assign-to-item")]
+    public async Task<IActionResult> AssignToItem([FromBody] AssignTagsToItemRequest request)
+    {
+        try
+        {
+            await _provider.AssignToItemAsync(request.TodoItemId, request.TagIds);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 
+    // DELETE: /api/tags/{id}
     [HttpDelete("{id}")]
-    public async Task<ActionResult<DeleteTagResponse>> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
             var affected = await _provider.DeleteAsync(id);
 
-            return Ok(new DeleteTagResponse
+            return Ok(new
             {
                 DeletedTagId = id,
                 AffectedItems = affected

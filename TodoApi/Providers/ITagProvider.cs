@@ -12,4 +12,6 @@ public interface ITagProvider
     Task<int> MergeAsync(int sourceTagId, int targetTagId);
 
     Task<int> DeleteAsync(int tagId);
+    
+    Task AssignToItemAsync(int itemId, List<int> tagIds);
 }

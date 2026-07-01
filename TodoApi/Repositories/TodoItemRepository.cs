@@ -29,6 +29,16 @@ public class TodoItemRepository : ITodoItemRepository
 
     public async Task AddAsync(TodoItem item)
         => await _context.TodoItems.AddAsync(item);
+    
+    public async Task AddItemTagAsync(int itemId, int tagId)
+    {
+        await _context.TodoItemTags.AddAsync(new TodoItemTag
+        {
+            TodoItemId = itemId,
+            TagId = tagId
+        });
+    }
+    
 
     public Task DeleteAsync(TodoItem item)
     {

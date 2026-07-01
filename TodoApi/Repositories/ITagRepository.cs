@@ -11,6 +11,8 @@ public interface ITagRepository
 
     Task AddAsync(Tag tag);
     Task DeleteAsync(Tag tag);
+    
+
 
     Task SaveChangesAsync();
 }

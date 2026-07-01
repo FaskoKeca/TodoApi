@@ -1,11 +1,23 @@
+using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
 using TodoApi.Domain.Entities;
 using TodoApi.Repositories;
 
 namespace TodoApi.Providers;
 
-public class TagProvider(ITagRepository repo) : ITagProvider
+public class TagProvider : ITagProvider
 {
+    private readonly ITodoItemRepository _itemRepo;
+    private readonly ITagRepository repo;
+
+    public TagProvider(
+        ITodoItemRepository itemRepo,
+        ITagRepository tagRepo)
+    {
+        _itemRepo = itemRepo;
+        repo = tagRepo;
+    }
+
     public Task<List<Tag>> GetAllAsync()
         => repo.GetAllAsync();
 
@@ -25,6 +37,27 @@ public class TagProvider(ITagRepository repo) : ITagProvider
         await repo.SaveChangesAsync();
 
         return tag;
+    }
+    
+    public async Task AssignToItemAsync(int itemId, List<int> tagIds)
+    {
+        var item = await _itemRepo.GetByIdAsync(itemId)
+                   ?? throw new KeyNotFoundException("Todo item not found.");
+
+        foreach (var tagId in tagIds)
+        {
+            var tag = await repo.GetByIdAsync(tagId)
+                      ?? throw new KeyNotFoundException($"Tag {tagId} not found.");
+
+            var exists = await _itemRepo.ItemTagExistsAsync(itemId, tagId);
+
+            if (exists)
+                continue;
+
+            await _itemRepo.AddItemTagAsync(itemId, tagId);
+        }
+
+        await _itemRepo.SaveChangesAsync();
     }
 
     public async Task<int> MergeAsync(int sourceTagId, int targetTagId)

@@ -132,28 +132,6 @@ public class TodoItemsController : ControllerBase
         return Ok(dto);
     }
     
-    //POST: /api/items/{id}/tags
-    
-    public record AssignTagsRequest(List<int> TagIds);
-
-    [HttpPost("items/{id}/tags")]
-    public async Task<ActionResult<TodoItemDto>> AssignTags(
-        int id,
-        AssignTagsRequest request)
-    {
-        var item = await _itemProvider.AssignTagsAsync(id, request.TagIds);
-        var dto = new TodoItemDto
-        {
-            Id = item.Id,
-            TodoListId = item.TodoListId,
-            Title = item.Title,
-            Notes = item.Notes,
-            Priority = item.Priority,
-            Due = item.Due,
-
-        };
-        return Ok(dto);
-    }
     
     //DELETE: /api/items/{id}
     

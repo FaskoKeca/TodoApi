@@ -26,7 +26,5 @@ public interface ITodoItemProvider
 
     Task<TodoItem> CompleteAsync(int itemId);
 
-    Task<TodoItem> AssignTagsAsync(int itemId, List<int> tagIds);
-
     Task DeleteAsync(int itemId);
 }

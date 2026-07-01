@@ -133,30 +133,6 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         return item;
     }
 
-    public async Task<TodoItem> AssignTagsAsync(int itemId, List<int> tagIds)
-    {
-        var item = await itemRepo.GetByIdAsync(itemId)
-                   ?? throw new KeyNotFoundException("Item not found.");
-
-        foreach (var tagId in tagIds)
-        {
-            var tag = await tagRepo.GetByIdAsync(tagId);
-
-            if (tag == null)
-                throw new KeyNotFoundException($"Tag {tagId} not found.");
-
-            var exists = await itemRepo.ItemTagExistsAsync(itemId, tagId);
-            if (exists)
-                continue;
-
-            await itemRepo.AddTagAsync(itemId, tagId);
-        }
-
-        await itemRepo.SaveChangesAsync();
-
-        return item;
-    }
-
     public async Task DeleteAsync(int itemId)
     {
         var item = await itemRepo.GetByIdAsync(itemId)
