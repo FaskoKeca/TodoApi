@@ -1,4 +1,4 @@
-using SchedulerApi.Contracts;
+using TodoApi.Clients.Contracts;
 using TodoApi.Clients.Interfaces;
 
 namespace TodoApi.Clients;
@@ -12,7 +12,7 @@ public class SchedulerClient(HttpClient http) : ISchedulerClient
         CancellationToken ct)
     {
         return await _http.GetFromJsonAsync<HolidayCheckResponse>(
-            $"/api/workingdays/is-holiday?date={date:O}",
+            $"/api/working-days/is-holiday?date={date:O}",
             ct);
     }
 
@@ -22,7 +22,7 @@ public class SchedulerClient(HttpClient http) : ISchedulerClient
         CancellationToken ct)
     {
         return await _http.GetFromJsonAsync<NextWorkingDayResponse>(
-            $"/api/workingdays/next?from={from:O}&businessDays={businessDays}",
+            $"/api/working-days/next?from={from:O}&businessDays={businessDays}",
             ct);
     }
 }

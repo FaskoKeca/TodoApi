@@ -1,5 +1,3 @@
-using TodoApi.Data;
-
 namespace TodoApi.Domain.Entities;
 
 public class TodoItemTag

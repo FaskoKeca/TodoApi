@@ -1,8 +1,8 @@
-namespace SchedulerApi.Contracts;
+namespace TodoApi.Clients.Contracts;
 
 public class NextWorkingDayResponse
 {
-    public DateTime From { get; set; }
-    public int BusinessDays { get; set; }
-    public DateTime Result { get; set; }
+    public DateTime From { get; init; }
+    public int BusinessDays { get; init; }
+    public DateTime Result { get; init; }
 }

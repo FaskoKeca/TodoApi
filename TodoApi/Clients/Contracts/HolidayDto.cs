@@ -1,4 +1,4 @@
-namespace SchedulerApi.Contracts;
+namespace TodoApi.Clients.Contracts;
 
 public class HolidayDto
 {

@@ -1,4 +1,4 @@
-using SchedulerApi.Contracts;
+using TodoApi.Clients.Contracts;
 
 namespace TodoApi.Clients.Interfaces;
 

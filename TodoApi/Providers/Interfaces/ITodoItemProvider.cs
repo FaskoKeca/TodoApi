@@ -1,6 +1,3 @@
-using TodoApi.Clients;
-using TodoApi.Clients.Interfaces;
-using TodoApi.Data;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 

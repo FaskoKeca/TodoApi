@@ -1,6 +1,5 @@
 using TodoApi.Domain.Entities;
 using TodoApi.Providers.Interfaces;
-using TodoApi.Repositories;
 using TodoApi.Repositories.Interfaces;
 
 namespace TodoApi.Providers;

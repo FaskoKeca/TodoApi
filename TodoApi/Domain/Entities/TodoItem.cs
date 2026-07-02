@@ -1,4 +1,4 @@
-using TodoApi.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace TodoApi.Domain.Entities;
 
@@ -10,8 +10,10 @@ public class TodoItem
 
     public TodoList TodoList { get; set; } = null!;
 
+    [MaxLength(50)]
     public string Title { get; set; } = string.Empty;
 
+    [MaxLength(200)]
     public string? Notes { get; set; }
 
     public Priority Priority { get; set; }

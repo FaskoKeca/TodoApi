@@ -1,14 +1,17 @@
-using TodoApi.Clients;
 using TodoApi.Clients.Interfaces;
 using TodoApi.Common.Exceptions;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
-using TodoApi.Repositories;
 using TodoApi.Repositories.Interfaces;
 
 namespace TodoApi.Providers;
 
-public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository itemRepo, ITagRepository tagRepo, ISchedulerClient schedulerClient, INotificationClient notificationClient)
+public class TodoItemProvider(
+    ITodoListRepository listRepo,
+    ITodoItemRepository itemRepo,
+    ISchedulerClient schedulerClient,
+    INotificationClient notificationClient,
+    ILogger<TodoItemProvider> logger)
     : ITodoItemProvider
 {
     public async Task<List<TodoItem>> GetItemsByListAsync(
@@ -17,7 +20,7 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         bool overdueOnly = false)
     {
         if (await listRepo.GetByIdAsync(listId) is null)
-                   throw new KeyNotFoundException("List not found.");
+            throw new KeyNotFoundException("List not found.");
 
         var items = await itemRepo.GetByListIdAsync(listId);
 
@@ -46,7 +49,6 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
 
     public async Task<List<TodoItemDto>> GetByListIdAsync(int listId, TodoStatus? status)
     {
-
         var items = await itemRepo.GetByListIdAsync(listId)
                     ?? throw new NotFoundException("List not found");
 
@@ -71,14 +73,14 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
                 .ToList()
         }).ToList();
     }
-    
+
 
     public async Task<TodoItem> CreateAsync(int listId,
         string title,
         string? notes,
         Priority priority,
         DateTime? dueDate
-        )
+    )
     {
         var list = await listRepo.GetByIdAsync(listId)
                    ?? throw new KeyNotFoundException("List not found.");
@@ -89,7 +91,7 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         if (dueDate.HasValue && dueDate.Value < DateTime.Now)
             throw new InvalidOperationException("Due date cannot be in the past.");
 
-        CancellationToken ct = default;
+        var ct = CancellationToken.None;
         if (dueDate.HasValue)
         {
             var check = await schedulerClient.IsHolidayAsync(dueDate.Value, ct);
@@ -98,7 +100,7 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
                 throw new BusinessRuleException(
                     $"Due date falls on a holiday: {check.Name}");
         }
-        
+
         var item = new TodoItem
         {
             TodoListId = listId,
@@ -115,8 +117,7 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
 
         return item;
     }
-    
-    
+
 
     public async Task UpdateStatusAsync(int itemId, TodoStatus status)
     {
@@ -134,29 +135,31 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         if (status == TodoStatus.Completed)
         {
             item.Completed = DateTime.Now;
-            CancellationToken ct = default;
-            
+
+            await itemRepo.SaveChangesAsync(); // IMPORTANT: persist first
+
             try
             {
                 await notificationClient.SendAsync(new SendNotificationRequest
                 {
                     Channel = "email",
-                    Recipient = "pe6o", // no real recipient to send to
+                    Recipient = "user@test.com", // placeholder for now
                     Subject = "Todo completed",
                     Message = $"Todo '{item.Title}' was completed.",
-                    ReferenceId = item.Id
-                }, ct);
+                    Reference = "go6o"
+                }, CancellationToken.None);
             }
             catch (Exception ex)
             {
-                // best effort: log only
-                Console.WriteLine($"Notification failed: {ex.Message}");
+                logger.LogWarning(ex, "Notification failed for item {ItemId}", item.Id);
             }
+
+            return;
         }
 
         await itemRepo.SaveChangesAsync();
     }
-    
+
 
     public async Task DeleteAsync(int itemId)
     {

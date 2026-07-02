@@ -1,6 +1,6 @@
 namespace NotificationsApi.Contracts;
 
-public class SendNotificationRequest
+public abstract class SendNotificationRequest
 {
     public string Channel { get; set; } = string.Empty;
 

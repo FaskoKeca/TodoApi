@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Data;
 using TodoApi.Dtos;
-using TodoApi.Providers;
 using TodoApi.Providers.Interfaces;
 
 namespace TodoApi.Controllers;
@@ -50,13 +48,6 @@ public class TodoListsController(ITodoListProvider provider) : ControllerBase
         try
         {
             var created = await provider.CreateAsync(request.Name, request.Description);
-
-            var dto = new TodoListDto
-            {
-                Id = created.Id,
-                Name = created.Name,
-                Description = created.Description
-            };
 
             return CreatedAtAction(
                 nameof(GetById),

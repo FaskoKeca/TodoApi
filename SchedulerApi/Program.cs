@@ -46,7 +46,7 @@ app.MapGet("/api/is-holiday", (DateTime date) =>
     });
 }).WithName("IsHoliday");
 
-app.MapGet("/api/workingdays/next", (DateTime from, int businessDays) =>
+app.MapGet("/api/working-days/next", (DateTime from, int businessDays) =>
 {
     var current = from;
     var remaining = businessDays;
