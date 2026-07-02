@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Data;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 using TodoApi.Providers;
@@ -9,22 +8,15 @@ namespace TodoApi.Controllers;
 
 [ApiController]
 [Route("api")]
-public class TodoItemsController : ControllerBase
+public class TodoItemsController(ITodoItemProvider itemProvider) : ControllerBase
 {
-    private readonly ITodoItemProvider _itemProvider;
-
-    public TodoItemsController(ITodoItemProvider itemProvider)
-    {
-        _itemProvider = itemProvider;
-    }
-
-    
     //GET: /api/items/{id}
     
-    [HttpGet("items/{id}")]
+    [HttpGet("items/{id:int}")]
     public async Task<ActionResult<TodoItemDto>> GetById(int id)
     {
-        var item = await _itemProvider.GetByIdAsync(id);
+        var item = await itemProvider.GetByIdAsync(id);
+        if (item == null) return BadRequest();
         var dto = new TodoItemDto
         {
             Id = item.Id,
@@ -48,12 +40,12 @@ public class TodoItemsController : ControllerBase
     //GET: /api/lists/{listId}/items
     //optional query: status, overdue
     
-    [HttpGet("lists/{listId}/items")]
+    [HttpGet("lists/{listId:int}/items")]
     public async Task<ActionResult<List<TodoItemDto>>> GetByList(
         [Required]int listId,
         [FromQuery] TodoStatus? status)
     {
-        var items = await _itemProvider.GetByListIdAsync(listId, status);
+        var items = await itemProvider.GetByListIdAsync(listId, status);
         var dto = items.Select(list => new TodoItemDto
         {
             Id = list.Id,
@@ -82,7 +74,7 @@ public class TodoItemsController : ControllerBase
         int listId,
         CreateTodoItemRequest request)
     {
-        var created = await _itemProvider.CreateAsync(
+        var created = await itemProvider.CreateAsync(
             listId,
             request.Title,
             request.Notes,
@@ -105,7 +97,9 @@ public class TodoItemsController : ControllerBase
             dto
         );
     }
-    
+
+    public CancellationToken CancellationToken { get; set; }
+
     //PUT: /api/items/{id}/status
     
 
@@ -114,7 +108,7 @@ public class TodoItemsController : ControllerBase
         int id,
         TodoStatus status)
     {
-        await _itemProvider.UpdateStatusAsync(id, status);
+        await itemProvider.UpdateStatusAsync(id, status);
         return NoContent();
     }
     
@@ -123,7 +117,7 @@ public class TodoItemsController : ControllerBase
     [HttpPost("items/{id}/complete")]
     public async Task<ActionResult> Complete(int id)
     {
-        await _itemProvider.UpdateStatusAsync(id, TodoStatus.Completed);
+        await itemProvider.UpdateStatusAsync(id, TodoStatus.Completed);
         return Ok();
     }
     
@@ -133,7 +127,7 @@ public class TodoItemsController : ControllerBase
     [HttpDelete("items/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _itemProvider.DeleteAsync(id);
+        await itemProvider.DeleteAsync(id);
         return NoContent();
     }
 }

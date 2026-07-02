@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 using TodoApi.Providers;
+using TodoApi.Providers.Interfaces;
 
 namespace TodoApi.Controllers;
 

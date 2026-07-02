@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using TodoApi.Clients;
 using TodoApi.Data;
 using TodoApi.Providers;
 using TodoApi.Repositories;
 using TodoApi.Middleware;
+using TodoApi.Providers.Interfaces;
+using TodoApi.Repositories.Interfaces;
+using ISchedulerClient = TodoApi.Clients.Interfaces.ISchedulerClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +26,18 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITodoListProvider, TodoListProvider>();
 builder.Services.AddScoped<ITodoItemProvider, TodoItemProvider>();
 builder.Services.AddScoped<ITagProvider, TagProvider>();
+builder.Services.AddHttpClient<ISchedulerClient, SchedulerClient>(client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["Services:SchedulerApi:BaseUrl"]!);
 
-
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
+builder.Services.AddHttpClient<ISchedulerClient, SchedulerClient>(client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["Services:SchedulerApi:BaseUrl"]!);
+});
 
 
 var app = builder.Build();

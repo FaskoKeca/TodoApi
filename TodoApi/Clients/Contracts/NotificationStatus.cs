@@ -1,4 +1,4 @@
-namespace TodoApi.Contracts;
+namespace TodoApi.Clients.Contracts;
 
 public enum NotificationStatus
 {

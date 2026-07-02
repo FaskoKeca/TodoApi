@@ -1,7 +1,6 @@
-using TodoApi.Data;
 using TodoApi.Domain.Entities;
 
-namespace TodoApi.Providers;
+namespace TodoApi.Providers.Interfaces;
 
 public interface ITagProvider
 {

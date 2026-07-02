@@ -1,11 +1,14 @@
+using TodoApi.Clients;
+using TodoApi.Clients.Interfaces;
 using TodoApi.Common.Exceptions;
 using TodoApi.Domain.Entities;
 using TodoApi.Dtos;
 using TodoApi.Repositories;
+using TodoApi.Repositories.Interfaces;
 
 namespace TodoApi.Providers;
 
-public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository itemRepo, ITagRepository tagRepo)
+public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository itemRepo, ITagRepository tagRepo, ISchedulerClient schedulerClient, INotificationClient notificationClient)
     : ITodoItemProvider
 {
     public async Task<List<TodoItem>> GetItemsByListAsync(
@@ -69,12 +72,13 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         }).ToList();
     }
     
-    public async Task<TodoItem> CreateAsync(
-        int listId,
+
+    public async Task<TodoItem> CreateAsync(int listId,
         string title,
         string? notes,
         Priority priority,
-        DateTime? dueDate)
+        DateTime? dueDate
+        )
     {
         var list = await listRepo.GetByIdAsync(listId)
                    ?? throw new KeyNotFoundException("List not found.");
@@ -85,6 +89,16 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         if (dueDate.HasValue && dueDate.Value < DateTime.Now)
             throw new InvalidOperationException("Due date cannot be in the past.");
 
+        CancellationToken ct = default;
+        if (dueDate.HasValue)
+        {
+            var check = await schedulerClient.IsHolidayAsync(dueDate.Value, ct);
+
+            if (check?.IsHoliday == true)
+                throw new BusinessRuleException(
+                    $"Due date falls on a holiday: {check.Name}");
+        }
+        
         var item = new TodoItem
         {
             TodoListId = listId,
@@ -101,6 +115,8 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
 
         return item;
     }
+    
+    
 
     public async Task UpdateStatusAsync(int itemId, TodoStatus status)
     {
@@ -116,7 +132,27 @@ public class TodoItemProvider(ITodoListRepository listRepo, ITodoItemRepository 
         item.Status = status;
 
         if (status == TodoStatus.Completed)
+        {
             item.Completed = DateTime.Now;
+            CancellationToken ct = default;
+            
+            try
+            {
+                await notificationClient.SendAsync(new SendNotificationRequest
+                {
+                    Channel = "email",
+                    Recipient = "pe6o", // no real recipient to send to
+                    Subject = "Todo completed",
+                    Message = $"Todo '{item.Title}' was completed.",
+                    ReferenceId = item.Id
+                }, ct);
+            }
+            catch (Exception ex)
+            {
+                // best effort: log only
+                Console.WriteLine($"Notification failed: {ex.Message}");
+            }
+        }
 
         await itemRepo.SaveChangesAsync();
     }

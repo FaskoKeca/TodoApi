@@ -1,7 +1,6 @@
-using TodoApi.Data;
 using TodoApi.Domain.Entities;
 
-namespace TodoApi.Repositories;
+namespace TodoApi.Repositories.Interfaces;
 
 public interface ITagRepository
 {
