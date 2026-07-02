@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using TodoApi.Common.Exceptions;
 
 namespace TodoApi.Middleware;

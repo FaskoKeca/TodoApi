@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApi", "TodoApi\TodoApi.csproj", "{41597B15-5216-406B-920E-2C5676850A38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsApi", "NotificationsApi\NotificationsApi.csproj", "{76FB6769-1449-453B-A80D-C4AF35EF1946}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApi", "SchedulerApi\SchedulerApi.csproj", "{B526FACA-B8EB-456C-80B5-910E77AA6B4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{41597B15-5216-406B-920E-2C5676850A38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41597B15-5216-406B-920E-2C5676850A38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41597B15-5216-406B-920E-2C5676850A38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76FB6769-1449-453B-A80D-C4AF35EF1946}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76FB6769-1449-453B-A80D-C4AF35EF1946}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76FB6769-1449-453B-A80D-C4AF35EF1946}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76FB6769-1449-453B-A80D-C4AF35EF1946}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B526FACA-B8EB-456C-80B5-910E77AA6B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B526FACA-B8EB-456C-80B5-910E77AA6B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B526FACA-B8EB-456C-80B5-910E77AA6B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B526FACA-B8EB-456C-80B5-910E77AA6B4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
