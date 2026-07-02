@@ -1,7 +1,6 @@
-using System.Net;
-using System.Xml.Serialization;
 using NotificationsApi.Contracts;
 using NotificationsApi.Services;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +73,8 @@ app.MapGet("/api/notifications",
 
 
 app.Run();
-
+app.MapOpenApi();
+app.MapScalarApiReference();
+app.MapControllers();
 
     

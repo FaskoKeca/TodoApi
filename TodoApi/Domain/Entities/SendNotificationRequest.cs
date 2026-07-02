@@ -10,5 +10,5 @@ public class SendNotificationRequest()
 
     public string Message { get; set; } = string.Empty;
 
-    public string Reference { get; set; } = string.Empty;
+    public int ReferenceId { get; set; }
 }

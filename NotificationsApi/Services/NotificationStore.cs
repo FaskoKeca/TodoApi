@@ -3,22 +3,23 @@ using NotificationsApi.Contracts;
 
 namespace NotificationsApi.Services;
 
-public class NotificationStore(ConcurrentDictionary<Guid, NotificationResponse?> storage)
+public class NotificationStore
 {
-    ConcurrentDictionary<Guid, NotificationResponse?> Storage { get; } = storage;
+    private readonly ConcurrentDictionary<Guid, NotificationResponse?> _storage = new();
 
     public void Add(NotificationResponse notification)
     {
-        Storage.TryAdd(notification.Id, notification);
+        _storage.TryAdd(notification.Id, notification);
     }
 
     public NotificationResponse? Get(Guid id)
     {
-        return Storage.TryGetValue(id, out NotificationResponse? notification) ? notification : new NotificationResponse();
+        return _storage.GetValueOrDefault(id);
     }
 
     public IEnumerable<NotificationResponse?> GetByReferenceId(string referenceId)
     {
-        return Storage.Where(x => x.Value != null && x.Value.ReferenceId == referenceId).Select(x => x.Value);
+        return _storage.Values.Where(n =>
+            n != null && n.ReferenceId == referenceId);
     }
 }

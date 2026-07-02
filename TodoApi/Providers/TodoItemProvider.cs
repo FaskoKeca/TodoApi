@@ -146,7 +146,7 @@ public class TodoItemProvider(
                     Recipient = "user@test.com", // placeholder for now
                     Subject = "Todo completed",
                     Message = $"Todo '{item.Title}' was completed.",
-                    Reference = "go6o"
+                    ReferenceId = item.Id
                 }, CancellationToken.None);
             }
             catch (Exception ex)

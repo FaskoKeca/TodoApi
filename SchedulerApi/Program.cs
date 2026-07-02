@@ -1,4 +1,6 @@
 using SchedulerApi.Contracts;
+using Scalar.AspNetCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,3 +78,8 @@ app.MapGet("/api/working-days/next", (DateTime from, int businessDays) =>
 
 
 app.Run();
+
+
+app.MapOpenApi();
+app.MapScalarApiReference();
+app.MapControllers();
